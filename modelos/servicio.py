@@ -60,3 +60,72 @@ class Servicio(ABC):
         return self._costo_base
 
 
+# =========================
+# SERVICIOS CONCRETOS
+# =========================
+
+class ServicioSala(Servicio):
+    """Servicio de reserva de salas"""
+
+    def __init__(self, nombre: str, costo_base: float, capacidad: int):
+        super().__init__(nombre, costo_base)
+
+        if capacidad <= 0:
+            raise ServicioError("La capacidad debe ser mayor a 0")
+
+        self._capacidad = capacidad
+
+    def calcular_costo(self, horas: int = 1) -> float:
+        if horas <= 0:
+            raise ServicioError("Las horas deben ser mayores a 0")
+
+        return self._costo_base * horas
+
+    def descripcion(self) -> str:
+        return f"Sala con capacidad para {self._capacidad} personas"
+
+
+class ServicioEquipo(Servicio):
+    """Servicio de alquiler de equipos"""
+
+    def __init__(self, nombre: str, costo_base: float, tipo_equipo: str):
+        super().__init__(nombre, costo_base)
+
+        if not tipo_equipo:
+            raise ServicioError("Debe especificar el tipo de equipo")
+
+        self._tipo_equipo = tipo_equipo
+
+    def calcular_costo(self, dias: int = 1) -> float:
+        if dias <= 0:
+            raise ServicioError("Los días deben ser mayores a 0")
+
+        return self._costo_base * dias
+
+    def descripcion(self) -> str:
+        return f"Alquiler de equipo tipo: {self._tipo_equipo}"
+
+
+class ServicioAsesoria(Servicio):
+    """Servicio de asesoría especializada"""
+
+    def __init__(self, nombre: str, costo_base: float, especialidad: str):
+        super().__init__(nombre, costo_base)
+
+        if not especialidad:
+            raise ServicioError("Debe especificar la especialidad")
+
+        self._especialidad = especialidad
+
+    def calcular_costo(self, horas: int = 1, descuento: float = 0) -> float:
+        if horas <= 0:
+            raise ServicioError("Las horas deben ser mayores a 0")
+
+        if descuento < 0 or descuento > 1:
+            raise ServicioError("El descuento debe estar entre 0 y 1")
+
+        total = self._costo_base * horas
+        return total * (1 - descuento)
+
+    def descripcion(self) -> str:
+        return f"Asesoría en: {self._especialidad}"
