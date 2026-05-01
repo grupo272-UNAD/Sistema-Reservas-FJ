@@ -1,3 +1,11 @@
+"""
+Modulo: gestor_cliente.py (GESTOR / LÓGICA)
+Contiene la lógica de validación extendida y el control de registros de clientes.
+Se aplican conceptos de:
+- Herencia: La clase ValidacionCliente extiende la funcionalidad de la clase base Cliente.
+- Manejo de Excepciones: Uso de bloques try-except para capturar errores de validación.
+"""
+
 import tkinter as tk #Importamos la biblioteca tkinter para crear la interface.
 from tkinter import messagebox # Importamos el módulo messagebox de tkinter para mostrar mensajes emergentes.
 from tkinter import ttk # Importamos el módulo ttk de tkinter para usar widgets más avanzados como Treeview.
@@ -62,3 +70,25 @@ class ValidacionCliente(Cliente): # Creamos la clase ValidacionCliente para vali
         
         else:
             return True # Retornamos true si el campo no está vacío.
+
+def registrarCliente():
+    nombre = nombreEntry.get() # Obtenemos el valor ingresado en el campo de nombre.
+    correo = correoEntry.get() # Obtenemos el valor ingresado en el campo de correo.
+    idCliente = idClienteEntry.get() # Obtenemos el valor ingresado en el campo de idCliente.
+
+    try: # Utilizamos un bloque try para manejar las excepciones desarolladas en los métodos de validación.
+        
+        clienteValidacion = ValidacionCliente(nombre, correo, idCliente) # Creamos una instancia de la clase de validación para poder utilizar los métodos de validación.
+        clienteValidacion.validarNombre(nombre) # Validamos el nombre ingresado por el usuario.
+        clienteValidacion.ValidarCorreo(correo) # Validamos el correo ingresado por el usuario.
+        clienteValidacion.validarIdCliente(idCliente) # Validamos el idCliente ingresado por el usuario.
+            
+        ListaRegistros.append(clienteValidacion) # Agregamos el cliente registrado a la lista de registros
+
+        return tk.messagebox.showinfo("Registro exitoso", f"Cliente registrado: {nombre}, Correo: {correo}, ID: {idCliente}") # Si la validación es exitosa, mostramos un mensaje de éxito con los datos del cliente registrado.
+                    
+    except ValueError as e: 
+        tk.messagebox.showerror("Error", str(e)) # Mostramos un mensaje de error con el contenido de la excepción
+
+
+ListaRegistros = [] # Creamos una lista vacía para almacenar los registros de los clientes.
