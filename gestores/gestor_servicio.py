@@ -6,7 +6,7 @@ Gestiona los servicios del sistema.
 - Registro de logs
 """
 
-from modelos.servicio import (
+from servicio import (
     ServicioSala,
     ServicioEquipo,
     ServicioAsesoria,
@@ -31,7 +31,7 @@ class GestorServicio:
                 raise ServicioError("El servicio no puede ser None")
 
             self._servicios.append(servicio)
-            self._log("Servicio registrado correctamente")
+            self._log(f"Servicio registrado correctamente: {servicio.nombre} | Tipo: {type(servicio).__name__})")
 
         except ServicioError as e:
             self._log(f"Error al registrar servicio: {str(e)}")

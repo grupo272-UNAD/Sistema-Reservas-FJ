@@ -1,0 +1,17 @@
+2026-05-04 19:34:46,542 - ERROR - Fallo de Regla de Negocio en Servicio (Op 1): El costo base debe ser mayor que cero
+2026-05-04 19:34:46,543 - INFO - Éxito: Cliente procesado correctamente.
+2026-05-04 19:34:46,543 - ERROR - Fallo Crítico del Sistema (Op 3): Faltan dependencias (Cliente/Servicio) para procesar la reserva.
+2026-05-04 19:34:46,543 - ERROR - Fallo de Regla de Negocio en Servicio (Op 4): El costo base debe ser mayor que cero
+Servicio registrado correctamente
+2026-05-04 19:49:54,303 - INFO - Éxito: Servicio procesado correctamente.
+2026-05-04 19:49:54,303 - INFO - Éxito: Cliente procesado correctamente.
+Reserva registrada correctamente
+2026-05-04 19:49:54,304 - INFO - Éxito: Reserva procesado correctamente.
+2026-05-04 19:49:54,304 - ERROR - Fallo de Regla de Negocio en Servicio (Op 4): El costo base debe ser mayor que cero
+2026-05-04 19:49:54,304 - ERROR - Fallo de Regla de Negocio en Cliente (Op 5): El nombre no puede contener números
+2026-05-04 19:49:54,304 - ERROR - Fallo de Regla de Negocio en Reserva (Op 6): La duración debe ser mayor a 0
+2026-05-04 19:49:54,304 - ERROR - Fallo Crítico del Sistema (Op 7): ServicioEquipo.__init__() missing 3 required positional arguments: 'nombre', 'costo_base', and 'tipo_equipo'
+2026-05-04 19:49:54,305 - ERROR - Fallo Crítico del Sistema (Op 8): Cliente.__init__() missing 3 required positional arguments: 'nombre', 'correo', and 'idCliente'
+2026-05-04 19:49:54,305 - ERROR - Fallo Crítico del Sistema (Op 9): ServicioSala.__init__() missing 3 required positional arguments: 'nombre', 'costo_base', and 'capacidad'
+2026-05-04 19:49:54,305 - ERROR - Fallo Crítico del Sistema (Op 10): Reserva.__init__() missing 1 required positional argument: 'duracion'
+2026-05-04 19:56:36,967 - ERROR - Fallo Crítico no contemplado en Servicio: ServicioAsesoria.__init__() missing 3 required positional arguments: 'nombre', 'costo_base', and 'especialidad'
