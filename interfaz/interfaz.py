@@ -14,6 +14,7 @@ import re
 # 1. CLASES Y LÓGICA DE NEGOCIO (MODELOS)
 # =========================================================
 
+# Servicio 
 class Servicio:
     """Clase Base para demostrar Polimorfismo."""
     def __init__(self, nombre, precio_base):
@@ -39,6 +40,7 @@ class ServicioAsesoria(Servicio):
         total = self.precio_base * horas
         return total * 0.9 if horas > 3 else total
 
+# Cliente 
 class Cliente:
     """Clase base para datos del cliente."""
     def __init__(self, nombre, correo, id_cliente):
@@ -64,6 +66,7 @@ ListaRegistros = []
 # 2. LÓGICA DE FUNCIONES (CONTROLADORES)
 # =========================================================
 
+# Registrar cliente
 def registrar_cliente():
     """Valida y registra al cliente en la lista global."""
     nombre = entry_nombre.get().strip()
@@ -72,7 +75,7 @@ def registrar_cliente():
 
     try:
         nuevo_cliente = ValidacionCliente(nombre, correo, ident)
-        # Corregido: Llamada al método correcto 'validar_todo'
+        #  'validar_todo'
         if nuevo_cliente.validar_todo():
             ListaRegistros.append(nuevo_cliente)
             messagebox.showinfo("Éxito", f"Cliente {nombre} registrado en el sistema.")
@@ -88,6 +91,7 @@ def confirmar_reserva():
     fecha = entry_fecha.get().strip()
     patron = r"^\d{2}/\d{2}/\d{4}$"
     
+    # Validar que la fecha sea correcta 
     if not re.match(patron, fecha):
         messagebox.showerror("Error de Fecha", "La fecha debe tener el formato DD/MM/AAAA")
         return # Esto detiene la función para que no se guarde nada
@@ -95,11 +99,12 @@ def confirmar_reserva():
     if not (nombre and servicio and horas and fecha):
         messagebox.showerror("Error", "Faltan datos para procesar la reserva.")
         return
-
+ 
+ # HORA
     try:
         horas_int = int(horas)
         
-        # Polimorfismo: Selección de objeto según el servicio
+        #  Selección de objeto según el servicio
         if servicio == "Sala":
             obj = ServicioSala("Sala VIP", 100) 
         elif servicio == "Equipo":
@@ -141,6 +146,7 @@ def cancelar_reserva():
             tabla.delete(seleccion)
             messagebox.showinfo("Éxito", "Reserva cancelada y registrada.")
 
+# Limpiar campos
 def limpiar_campos():
     """Limpia los widgets de entrada."""
     entry_nombre.delete(0, tk.END)
@@ -173,28 +179,35 @@ def iniciar_interfaz():
     f_lbl = ("Segoe UI Semibold", 10)
     f_ent = ("Segoe UI", 11)
 
+ #FILAS DE DATOS 
     # Fila 1
+    #NOMBRE
     tk.Label(frame_card, text="Nombre Completo", font=f_lbl, bg="white", fg="#5D6D7E").grid(row=0, column=0, sticky="w")
     entry_nombre = tk.Entry(frame_card, font=f_ent, highlightthickness=1, highlightbackground="#D5DBDB", relief="flat")
     entry_nombre.grid(row=1, column=0, sticky="ew", padx=(0,15), pady=5, ipady=4)
 
+    #CORREO
     tk.Label(frame_card, text="Correo Electrónico", font=f_lbl, bg="white", fg="#5D6D7E").grid(row=0, column=1, sticky="w")
     entry_correo = tk.Entry(frame_card, font=f_ent, highlightthickness=1, highlightbackground="#D5DBDB", relief="flat")
     entry_correo.grid(row=1, column=1, sticky="ew", padx=10, pady=5, ipady=4)
-
+     
+    # IDENTIFICACION 
     tk.Label(frame_card, text="Identificación", font=f_lbl, bg="white", fg="#5D6D7E").grid(row=0, column=2, sticky="w")
     entry_identificacion = tk.Entry(frame_card, font=f_ent, highlightthickness=1, highlightbackground="#D5DBDB", relief="flat")
     entry_identificacion.grid(row=1, column=2, sticky="ew", padx=(15,0), pady=5, ipady=4)
 
     # Fila 2
+    # TIPO DE SERVICIO
     tk.Label(frame_card, text="Tipo de Servicio", font=f_lbl, bg="white", fg="#5D6D7E").grid(row=2, column=0, sticky="w", pady=(15,0))
     combo_servicio = ttk.Combobox(frame_card, font=f_ent, state="readonly", values=["Sala", "Equipo", "Asesoria"])
     combo_servicio.grid(row=3, column=0, sticky="ew", padx=(0,15), pady=5)
 
+    # HORA
     tk.Label(frame_card, text="Horas", font=f_lbl, bg="white", fg="#5D6D7E").grid(row=2, column=1, sticky="w", pady=(15,0))
     entry_horas = tk.Entry(frame_card, font=f_ent, highlightthickness=1, highlightbackground="#D5DBDB", relief="flat")
     entry_horas.grid(row=3, column=1, sticky="ew", padx=10, pady=5, ipady=4)
 
+    # FECHA
     tk.Label(frame_card, text="Fecha (DD/MM/AAAA)", font=f_lbl, bg="white", fg="#5D6D7E").grid(row=2, column=2, sticky="w", pady=(15,0))
     entry_fecha = tk.Entry(frame_card, font=f_ent, highlightthickness=1, highlightbackground="#D5DBDB", relief="flat")
     entry_fecha.grid(row=3, column=2, sticky="ew", padx=(15,0), pady=5, ipady=4)
