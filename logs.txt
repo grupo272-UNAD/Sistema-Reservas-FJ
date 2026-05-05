@@ -1,0 +1,9 @@
+2026-05-04 21:08:47.185217 - Cliente: karen chare - Costo: $300
+2026-05-04 21:10:02.415973 - Cliente: karen - Costo: $160
+2026-05-04 21:24:02.650513 - Cliente: karen chara - Costo: $360.0
+2026-05-04 21:31:56.010349 - Cliente: karen chara - Costo: $620
+2026-05-04 21:32:04.809801 - CANCELADA - Cliente: karen chara
+2026-05-04 21:32:46.773509 - Cliente: NNS - Costo: $20
+2026-05-04 21:32:58.846495 - CANCELADA - Cliente: NNS
+2026-05-04 21:39:23.897131 - Cliente: KAREN CHARA - Costo: $250
+2026-05-04 21:41:43.687337 - Cliente: MARIA - Costo: $432.0

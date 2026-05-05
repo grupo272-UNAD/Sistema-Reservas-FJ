@@ -7,52 +7,91 @@
 
 import tkinter as tk
 from tkinter import ttk, messagebox
+import datetime
 import re
 
 # =========================================================
-# 1. IMPORTAR CLASES (Capa de Negocio)
+# 1. CLASES Y LÓGICA DE NEGOCIO (MODELOS)
 # =========================================================
-try:
-    # Se importan las clases del archivo externo modelos/servicio.py
-    from modelos.servicio import (
-        ServicioSala,
-        ServicioEquipo,
-        ServicioAsesoria,
-        ServicioError
-    )
-except ImportError:
-    # Definición de respaldo en caso de que el archivo no esté accesible
-    class ServicioError(Exception): pass
+
+class Servicio:
+    """Clase Base para demostrar Polimorfismo."""
+    def __init__(self, nombre, precio_base):
+        self.nombre = nombre
+        self.precio_base = precio_base
+
+    def calcular_costo(self, horas):
+        return self.precio_base * horas
+
+class ServicioSala(Servicio):
+    def calcular_costo(self, horas):
+        # Polimorfismo: Costo base + cargo fijo de limpieza
+        return (self.precio_base * horas) + 20
+
+class ServicioEquipo(Servicio):
+    def calcular_costo(self, horas):
+        # Polimorfismo: Costo estándar
+        return self.precio_base * horas
+
+class ServicioAsesoria(Servicio):
+    def calcular_costo(self, horas):
+        # Polimorfismo: Descuento del 10% si supera las 3 horas
+        total = self.precio_base * horas
+        return total * 0.9 if horas > 3 else total
+
+class Cliente:
+    """Clase base para datos del cliente."""
+    def __init__(self, nombre, correo, id_cliente):
+        self.nombre = nombre
+        self.correo = correo
+        self.id_cliente = id_cliente
+
+class ValidacionCliente(Cliente):
+    """Aplica Herencia: extiende Cliente con métodos de validación."""
+    def validar_todo(self):
+        if not self.nombre.strip():
+            raise ValueError("El nombre no puede estar vacío.")
+        if "@" not in self.correo or "." not in self.correo:
+            raise ValueError("El correo electrónico no es válido.")
+        if not self.id_cliente.strip() or not self.id_cliente.isdigit():
+            raise ValueError("La identificación debe ser un número válido.")
+        return True
+
+# Lista global para registros en memoria
+ListaRegistros = []
 
 # =========================================================
-# 2. LÓGICA DE FUNCIONES
+# 2. LÓGICA DE FUNCIONES (CONTROLADORES)
 # =========================================================
 
 def registrar_cliente():
-    """Valida y registra la información del cliente."""
+    """Valida y registra al cliente en la lista global."""
     nombre = entry_nombre.get().strip()
     correo = entry_correo.get().strip()
-    id_cliente = entry_identificacion.get().strip()
+    ident = entry_identificacion.get().strip()
 
-    if not (nombre and correo and id_cliente):
-        messagebox.showerror("Error", "Complete todos los campos del cliente.")
-        return
+    try:
+        nuevo_cliente = ValidacionCliente(nombre, correo, ident)
+        # Corregido: Llamada al método correcto 'validar_todo'
+        if nuevo_cliente.validar_todo():
+            ListaRegistros.append(nuevo_cliente)
+            messagebox.showinfo("Éxito", f"Cliente {nombre} registrado en el sistema.")
+    except ValueError as e:
+        messagebox.showerror("Error de Validación", str(e))
 
-    # Validación de formato de correo mediante expresiones regulares
-    if not re.match(r'^[\w\.-]+@[\w\.-]+\.\w+$', correo):
-        messagebox.showerror("Error", "Correo electrónico inválido.")
-        return
-
-    messagebox.showinfo("Registro", f"Cliente {nombre} registrado correctamente.")
-
+# Confirmar reserva
 def confirmar_reserva():
-    # 1. Capturar datos de los Entry
+    """Procesa la reserva, calcula el costo y la añade a la tabla."""
     nombre = entry_nombre.get().strip()
     servicio = combo_servicio.get()
     horas = entry_horas.get().strip()
     fecha = entry_fecha.get().strip()
+    patron = r"^\d{2}/\d{2}/\d{4}$"
+    
+    if not re.match(patron, fecha):
+        messagebox.showerror("Error de Fecha", "La fecha debe tener el formato DD/MM/AAAA")
+        return # Esto detiene la función para que no se guarde nada
 
-    # 2. Validación básica
     if not (nombre and servicio and horas and fecha):
         messagebox.showerror("Error", "Faltan datos para procesar la reserva.")
         return
@@ -60,54 +99,59 @@ def confirmar_reserva():
     try:
         horas_int = int(horas)
         
-        # 3. Crear el objeto según el servicio (Corrigiendo el error de argumentos)
+        # Polimorfismo: Selección de objeto según el servicio
         if servicio == "Sala":
-            # Usamos 2 argumentos para coincidir con tu clase ServicioSala
             obj = ServicioSala("Sala VIP", 100) 
         elif servicio == "Equipo":
             obj = ServicioEquipo("Computador", 50)
         elif servicio == "Asesoria":
             obj = ServicioAsesoria("Asesoría POO", 80)
 
-        # 4. Calcular el costo
         costo_final = obj.calcular_costo(horas_int)
 
-        # 5. LA PARTE CLAVE: Insertar en la tabla "de abajo"
-        # El orden de 'values' debe coincidir exactamente con tus columnas
+        # Inserción en la tabla (Simula el paso de datos a la base de datos)
         tabla.insert("", tk.END, values=(
-            nombre,      # Columna 1: Cliente
-            servicio,    # Columna 2: Servicio
-            horas,       # Columna 3: Horas
-            fecha,       # Columna 4: Fecha
-            "Confirmada",# Columna 5: Estado
-            f"${costo_final}" # Columna 6: Costo
+            nombre, servicio, horas, fecha, "Confirmada", f"${costo_final:,}"
         ))
 
-        messagebox.showinfo("Éxito", "Reserva añadida a la lista correctamente.")
+        # Registro en logs.txt (Persistencia)
+        with open("logs.txt", "a") as f:
+            f.write(f"{datetime.datetime.now()} - Cliente: {nombre} - Costo: ${costo_final}\n")
+
+        messagebox.showinfo("Confirmación", f"Reserva confirmada por un total de ${costo_final}")
         limpiar_campos()
 
+    except ValueError:
+        messagebox.showerror("Error", "La cantidad de horas debe ser un número.")
     except Exception as e:
         messagebox.showerror("Error", f"No se pudo confirmar: {str(e)}")
 
+#Cancelar reserva
 def cancelar_reserva():
-    """Elimina la reserva seleccionada de la tabla."""
     seleccion = tabla.selection()
-    if not seleccion:
-        messagebox.showwarning("Atención", "Seleccione una reserva de la lista para cancelar.")
-        return
-    
-    if messagebox.askyesno("Confirmar", "¿Desea cancelar la reserva seleccionada?"):
-        tabla.delete(seleccion)
-        messagebox.showinfo("Cancelado", "Reserva eliminada correctamente.")
+    if seleccion:
+        item = tabla.item(seleccion)
+        nombre_cliente = item['values'][0] # Obtiene el nombre de la fila seleccionada
+        
+        if messagebox.askyesno("Confirmar", f"¿Desea cancelar la reserva de {nombre_cliente}?"):
+            # Guardar cancelación en el log
+            with open("logs.txt", "a") as f:
+                f.write(f"{datetime.datetime.now()} - CANCELADA - Cliente: {nombre_cliente}\n")
+            
+            tabla.delete(seleccion)
+            messagebox.showinfo("Éxito", "Reserva cancelada y registrada.")
 
 def limpiar_campos():
-    """Limpia los widgets de entrada de texto."""
-    for widget in [entry_nombre, entry_correo, entry_identificacion, entry_horas, entry_fecha]:
-        widget.delete(0, tk.END)
+    """Limpia los widgets de entrada."""
+    entry_nombre.delete(0, tk.END)
+    entry_correo.delete(0, tk.END)
+    entry_identificacion.delete(0, tk.END)
+    entry_horas.delete(0, tk.END)
+    entry_fecha.delete(0, tk.END)
     combo_servicio.set("")
 
 # =========================================================
-# 3. INTERFAZ GRÁFICA (Capa de Presentación)
+# 3. INTERFAZ GRÁFICA 
 # =========================================================
 
 def iniciar_interfaz():
@@ -115,77 +159,71 @@ def iniciar_interfaz():
 
     ventana = tk.Tk()
     ventana.title("Sistema de Gestión de Reservas - UNAD")
-    ventana.geometry("1100x800")
-    ventana.configure(bg="#F4F6F7") # Fondo gris azulado claro
-    ventana.resizable(False, False)
+    ventana.geometry("1100x850")
+    ventana.configure(bg="#F4F6F7")
 
-    # --- TÍTULO PRINCIPAL ---
-    tk.Label(
-        ventana, text="SISTEMA DE RESERVAS", font=("Segoe UI", 28, "bold"),
-        bg="#F4F6F7", fg="#1B4F72", pady=20
-    ).pack()
+    # Título
+    tk.Label(ventana, text="SISTEMA DE RESERVAS", font=("Segoe UI", 28, "bold"),
+             bg="#F4F6F7", fg="#1B4F72", pady=20).pack()
 
-    # --- CONTENEDOR DEL FORMULARIO (ESTILO CARD) ---
-    # Este marco agrupa las entradas en dos columnas centradas.
+    # Formulario
     frame_card = tk.Frame(ventana, bg="white", padx=30, pady=20, highlightbackground="#D5DBDB", highlightthickness=1)
     frame_card.pack(padx=50, fill="x")
 
-    # Configuración de columnas del grid
-    for i in range(3): frame_card.columnconfigure(i, weight=1)
-
-    # Estilos de fuente
     f_lbl = ("Segoe UI Semibold", 10)
     f_ent = ("Segoe UI", 11)
 
-    # Campos: Fila 1
-    tk.Label(frame_card, text="Nombre Completo", font=f_lbl, bg="white", fg="#5D6D7E").grid(row=0, column=0, sticky="w", pady=(10,0))
-    entry_nombre = tk.Entry(frame_card, font=f_ent, relief="flat", highlightthickness=1, highlightbackground="#D5DBDB")
+    # Fila 1
+    tk.Label(frame_card, text="Nombre Completo", font=f_lbl, bg="white", fg="#5D6D7E").grid(row=0, column=0, sticky="w")
+    entry_nombre = tk.Entry(frame_card, font=f_ent, highlightthickness=1, highlightbackground="#D5DBDB", relief="flat")
     entry_nombre.grid(row=1, column=0, sticky="ew", padx=(0,15), pady=5, ipady=4)
 
-    tk.Label(frame_card, text="Correo Electrónico", font=f_lbl, bg="white", fg="#5D6D7E").grid(row=0, column=1, sticky="w", pady=(10,0))
-    entry_correo = tk.Entry(frame_card, font=f_ent, relief="flat", highlightthickness=1, highlightbackground="#D5DBDB")
+    tk.Label(frame_card, text="Correo Electrónico", font=f_lbl, bg="white", fg="#5D6D7E").grid(row=0, column=1, sticky="w")
+    entry_correo = tk.Entry(frame_card, font=f_ent, highlightthickness=1, highlightbackground="#D5DBDB", relief="flat")
     entry_correo.grid(row=1, column=1, sticky="ew", padx=10, pady=5, ipady=4)
 
-    tk.Label(frame_card, text="Identificación", font=f_lbl, bg="white", fg="#5D6D7E").grid(row=0, column=2, sticky="w", pady=(10,0))
-    entry_identificacion = tk.Entry(frame_card, font=f_ent, relief="flat", highlightthickness=1, highlightbackground="#D5DBDB")
+    tk.Label(frame_card, text="Identificación", font=f_lbl, bg="white", fg="#5D6D7E").grid(row=0, column=2, sticky="w")
+    entry_identificacion = tk.Entry(frame_card, font=f_ent, highlightthickness=1, highlightbackground="#D5DBDB", relief="flat")
     entry_identificacion.grid(row=1, column=2, sticky="ew", padx=(15,0), pady=5, ipady=4)
 
-    # Campos: Fila 2
+    # Fila 2
     tk.Label(frame_card, text="Tipo de Servicio", font=f_lbl, bg="white", fg="#5D6D7E").grid(row=2, column=0, sticky="w", pady=(15,0))
     combo_servicio = ttk.Combobox(frame_card, font=f_ent, state="readonly", values=["Sala", "Equipo", "Asesoria"])
     combo_servicio.grid(row=3, column=0, sticky="ew", padx=(0,15), pady=5)
 
-    tk.Label(frame_card, text="Cantidad de Horas", font=f_lbl, bg="white", fg="#5D6D7E").grid(row=2, column=1, sticky="w", pady=(15,0))
-    entry_horas = tk.Entry(frame_card, font=f_ent, relief="flat", highlightthickness=1, highlightbackground="#D5DBDB")
+    tk.Label(frame_card, text="Horas", font=f_lbl, bg="white", fg="#5D6D7E").grid(row=2, column=1, sticky="w", pady=(15,0))
+    entry_horas = tk.Entry(frame_card, font=f_ent, highlightthickness=1, highlightbackground="#D5DBDB", relief="flat")
     entry_horas.grid(row=3, column=1, sticky="ew", padx=10, pady=5, ipady=4)
 
     tk.Label(frame_card, text="Fecha (DD/MM/AAAA)", font=f_lbl, bg="white", fg="#5D6D7E").grid(row=2, column=2, sticky="w", pady=(15,0))
-    entry_fecha = tk.Entry(frame_card, font=f_ent, relief="flat", highlightthickness=1, highlightbackground="#D5DBDB")
+    entry_fecha = tk.Entry(frame_card, font=f_ent, highlightthickness=1, highlightbackground="#D5DBDB", relief="flat")
     entry_fecha.grid(row=3, column=2, sticky="ew", padx=(15,0), pady=5, ipady=4)
 
-    # --- SECCIÓN DE BOTONES ---
+    for i in range(3): frame_card.columnconfigure(i, weight=1)
+
+    # Botones
     frame_btns = tk.Frame(ventana, bg="#F4F6F7")
     frame_btns.pack(pady=30)
 
-    def crear_btn(text, color, cmd, col):
-        btn = tk.Button(frame_btns, text=text, bg=color, fg="white", font=("Segoe UI", 10, "bold"),
-                        width=20, height=2, relief="flat", cursor="hand2", command=cmd)
-        btn.grid(row=0, column=col, padx=15)
+ 
+    btns = [
+        ("Registrar Cliente", "#2E86C1", registrar_cliente),
+        ("Confirmar Reserva", "#28B463", confirmar_reserva),
+        ("Cancelar Reserva", "#CB4335", cancelar_reserva)
+    ]
 
-    crear_btn("Registrar Cliente", "#2E86C1", registrar_cliente, 0)
-    crear_btn("Confirmar Reserva", "#28B463", confirmar_reserva, 1)
-    crear_btn("Cancelar Reserva", "#CB4335", cancelar_reserva, 2)
+    for i, (txt, col, cmd) in enumerate(btns):
+        tk.Button(frame_btns, text=txt, bg=col, fg="white", font=("Segoe UI", 10, "bold"),
+                  width=20, height=2, relief="flat", cursor="hand2", command=cmd).grid(row=0, column=i, padx=15)
 
-    # --- TABLA DE RESERVAS (RESULTADOS) ---
+    # Tabla de Resultados
     frame_tabla = tk.Frame(ventana, bg="white")
     frame_tabla.pack(padx=50, fill="both", expand=True, pady=(0,20))
 
-    # Estilo de la tabla
     style = ttk.Style()
     style.theme_use("clam")
     style.configure("Treeview.Heading", font=("Segoe UI Semibold", 10), background="#E5E8E8")
-    style.configure("Treeview", font=("Segoe UI", 10), rowheight=30)
-
+    
     columnas = ("Cliente", "Servicio", "Horas", "Fecha", "Estado", "Costo")
     tabla = ttk.Treeview(frame_tabla, columns=columnas, show="headings")
 
@@ -195,10 +233,9 @@ def iniciar_interfaz():
 
     tabla.pack(side="left", fill="both", expand=True)
     
-    # Scrollbar para la tabla
-    scroll = ttk.Scrollbar(frame_tabla, orient="vertical", command=tabla.yview)
-    tabla.configure(yscroll=scroll.set)
-    scroll.pack(side="right", fill="y")
+    scrollbar = ttk.Scrollbar(frame_tabla, orient="vertical", command=tabla.yview)
+    tabla.configure(yscroll=scrollbar.set)
+    scrollbar.pack(side="right", fill="y")
 
     ventana.mainloop()
 
