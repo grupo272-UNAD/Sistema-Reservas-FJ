@@ -1,7 +1,4 @@
-"""
-Modulo: gestor_cliente.py
-Maneja la colección de clientes y su persistencia en memoria.
-"""
+
 from cliente import Cliente, ClienteError
 
 class GestorCliente:
@@ -10,7 +7,7 @@ class GestorCliente:
 
     def registrar_cliente(self, cliente: Cliente):
         try:
-            # Aquí podrías verificar si el ID ya existe antes de añadirlo
+            # Verificacion de cliente si ya existe
             self.__clientes.append(cliente)
             self._log(f"Cliente registrado: {cliente.nombre} | ID: {cliente.id_cliente} | Correo: {cliente.correo}")
         except Exception as e:
