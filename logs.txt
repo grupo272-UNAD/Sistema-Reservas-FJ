@@ -7,3 +7,36 @@
 2026-05-04 21:32:58.846495 - CANCELADA - Cliente: NNS
 2026-05-04 21:39:23.897131 - Cliente: KAREN CHARA - Costo: $250
 2026-05-04 21:41:43.687337 - Cliente: MARIA - Costo: $432.0
+2026-05-05 00:40:55.263171 - Cliente: k - Costo: $250
+2026-05-05 00:41:03.188338 - CANCELADA - Cliente: k
+2026-05-05 22:56:04.932484 - Cliente: karen - Costo: $300
+2026-05-05 23:06:56.871750 - Reserva creada para karen - Costo final: $432.0
+[2026-05-05 23:17:09] [INFO] Aplicación iniciada.
+[2026-05-05 23:17:40] [INFO] RESERVA EXITOSA: Cliente karen - Servicio Equipo
+[2026-05-05 23:17:52] [ERROR] ERROR: Todos los campos son obligatorios.
+[2026-05-05 23:23:47] [INFO] Aplicación iniciada por el usuario.
+[2026-05-05 23:24:19] [INFO] RESERVA MANUAL EXITOSA: Cliente karen | Servicio Asesoria
+[2026-05-05 23:24:22] [INFO] --- INICIANDO SIMULACIÓN DE 10 OPERACIONES ---
+[2026-05-05 23:24:22] [INFO] Simulación #1: ÉXITO - VÁLIDO
+[2026-05-05 23:24:22] [WARNING] Simulación #2: FALLO CONTROLADO - ERROR: Nombre vacío | Motivo: El nombre no puede estar vacío.
+[2026-05-05 23:24:22] [WARNING] Simulación #3: FALLO CONTROLADO - ERROR: ID no numérica | Motivo: La identificación debe ser puramente numérica.
+[2026-05-05 23:24:22] [INFO] Simulación #4: ÉXITO - ERROR: Fecha mal formato
+[2026-05-05 23:24:22] [INFO] Simulación #5: ÉXITO - VÁLIDO
+[2026-05-05 23:24:22] [WARNING] Simulación #6: FALLO CONTROLADO - ERROR: Correo sin punto | Motivo: Correo electrónico con formato inválido.
+[2026-05-05 23:24:22] [WARNING] Simulación #7: FALLO CONTROLADO - ERROR: Servicio inválido | Motivo: Servicio no reconocido
+[2026-05-05 23:24:22] [INFO] Simulación #8: ÉXITO - VÁLIDO
+[2026-05-05 23:24:22] [INFO] Simulación #9: ÉXITO - VÁLIDO
+[2026-05-05 23:24:22] [WARNING] Simulación #10: FALLO CONTROLADO - ERROR: Horas no numéricas | Motivo: invalid literal for int() with base 10: 'letras'
+[2026-05-05 23:35:20] [INFO] Aplicación iniciada por el usuario.
+[2026-05-05 23:36:13] [INFO] RESERVA MANUAL EXITOSA: Cliente karen | Servicio Equipo
+[2026-05-05 23:36:18] [INFO] --- INICIANDO SIMULACIÓN DE 10 OPERACIONES ---
+[2026-05-05 23:36:18] [INFO] Simulación #1: ÉXITO - VÁLIDO
+[2026-05-05 23:36:18] [WARNING] Simulación #2: FALLO CONTROLADO - ERROR: Nombre vacío | Motivo: El nombre no puede estar vacío.
+[2026-05-05 23:36:18] [WARNING] Simulación #3: FALLO CONTROLADO - ERROR: ID no numérica | Motivo: La identificación debe ser puramente numérica.
+[2026-05-05 23:36:18] [INFO] Simulación #4: ÉXITO - ERROR: Fecha mal formato
+[2026-05-05 23:36:18] [INFO] Simulación #5: ÉXITO - VÁLIDO
+[2026-05-05 23:36:18] [WARNING] Simulación #6: FALLO CONTROLADO - ERROR: Correo sin punto | Motivo: Correo electrónico con formato inválido.
+[2026-05-05 23:36:18] [WARNING] Simulación #7: FALLO CONTROLADO - ERROR: Servicio inválido | Motivo: Servicio no reconocido
+[2026-05-05 23:36:18] [INFO] Simulación #8: ÉXITO - VÁLIDO
+[2026-05-05 23:36:18] [INFO] Simulación #9: ÉXITO - VÁLIDO
+[2026-05-05 23:36:18] [WARNING] Simulación #10: FALLO CONTROLADO - ERROR: Horas no numéricas | Motivo: invalid literal for int() with base 10: 'letras'

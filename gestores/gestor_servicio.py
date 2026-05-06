@@ -6,97 +6,36 @@ Gestiona los servicios del sistema.
 - Registro de logs
 """
 
+# 1. TODOS LOS IMPORTS 
 from modelos.servicio import (
     ServicioSala,
     ServicioEquipo,
     ServicioAsesoria,
     ServicioError
 )
-
+# 2. Nueva excepción de utilidades
+from utilidades.excepciones import DatoNoValidoError
 
 class GestorServicio:
-    """
-    Clase encargada de administrar los servicios
-    """
-
     def __init__(self):
         self._servicios = []
 
     def registrar_servicio(self, servicio):
-        """
-        Registra un servicio en el sistema
-        """
         try:
             if servicio is None:
                 raise ServicioError("El servicio no puede ser None")
 
+            # VALIDACIONES
+            if not servicio.nombre or servicio.nombre.strip() == "":
+                raise DatoNoValidoError("El nombre del servicio no puede estar vacío")
+
+            if servicio.precio <= 0:
+                raise DatoNoValidoError("El precio del servicio debe ser mayor a 0")
+
+            # REGISTRO
             self._servicios.append(servicio)
-            self._log("Servicio registrado correctamente")
+            self._log(f"Servicio '{servicio.nombre}' registrado correctamente")
 
-        except ServicioError as e:
+        except (ServicioError, DatoNoValidoError) as e:
             self._log(f"Error al registrar servicio: {str(e)}")
-
-    def listar_servicios(self):
-        """Devuelve todos los servicios"""
-        return self._servicios
-
-    def buscar_servicio(self, nombre):
-        """
-        Busca un servicio por nombre
-        """
-        try:
-            for servicio in self._servicios:
-                if servicio.nombre == nombre:
-                    return servicio
-
-            raise ServicioError("Servicio no encontrado")
-
-        except ServicioError as e:
-            self._log(str(e))
-            return None
-
-    def eliminar_servicio(self, nombre):
-        """
-        Elimina un servicio del sistema
-        """
-        try:
-            servicio = self.buscar_servicio(nombre)
-
-            if servicio is None:
-                raise ServicioError("No se puede eliminar un servicio inexistente")
-
-            self._servicios.remove(servicio)
-            self._log("Servicio eliminado correctamente")
-
-        except ServicioError as e:
-            self._log(f"Error al eliminar servicio: {str(e)}")
-
-    def calcular_costo_servicio(self, nombre, **kwargs):
-        """
-        Calcula el costo de un servicio usando polimorfismo
-        """
-        try:
-            servicio = self.buscar_servicio(nombre)
-
-            if servicio is None:
-                raise ServicioError("Servicio no encontrado para cálculo")
-
-            return servicio.calcular_costo(**kwargs)
-
-        except Exception as e:
-            self._log(f"Error en cálculo de costo: {str(e)}")
-            return None
-
-    def _log(self, mensaje):
-        """
-        Registra eventos en archivo logs.txt
-        """
-        try:
-            with open("logs.txt", "a", encoding="utf-8") as archivo:
-                archivo.write(mensaje + "\n")
-        except Exception as e:
-            print("Error escribiendo en logs:", e)
-
-
-
-
+            raise e # Esto le avisa a la interfaz que algo falló
