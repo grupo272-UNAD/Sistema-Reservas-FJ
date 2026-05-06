@@ -3,7 +3,6 @@
 
 #Importamos la biblioteca tkinter para crear la interface
 #Importamos el módulo messagebox de tkinter para mostrar mensajes emergentes
-
 import tkinter as tk
 from tkinter import ttk, messagebox
 import datetime
@@ -55,11 +54,15 @@ class Servicio(ABC):
         """Método abstracto que obliga a la implementación en clases hijas."""
         pass
 
-# Especializaciones de Servicio (Herencia y Polimorfismo
+# Especializaciones de Servicio
 
 # Servicio Sala
 class ServicioSala(Servicio):
     """Subclase para reservas de espacios físicos."""
+    def __init__(self, nombre, precio_base, capacidad):
+        super().__init__(nombre, precio_base)
+        self.capacidad = capacidad
+
     def calcular_costo(self, horas):
         # Polimorfismo: Costo base + recargo de limpieza
         return (self.precio_base * horas) + 20
@@ -98,7 +101,8 @@ class Cliente:
     @property
     def nombre(self):
         return self.__nombre
-
+    
+ #Validar datos
     def validar_datos(self):
         """Validación robusta de datos personales."""
         if not self.__nombre.strip():
@@ -134,6 +138,7 @@ class Reserva:
 # 3. CONTROLADORES (LÓGICA Y SIMULACIÓN)
 # =========================================================
 
+#Confirmar reserva
 def confirmar_reserva():
     """Captura datos de la UI y gestiona la creación de una reserva."""
     nom = entry_nombre.get().strip()
@@ -152,7 +157,7 @@ def confirmar_reserva():
 
         # Lógica de creación de objetos
         if serv_tipo == "Sala":
-            obj_serv = ServicioSala("Sala VIP", 100)
+            obj_serv = ServicioSala("Sala A", 100, capacidad=10)
         elif serv_tipo == "Equipo":
             obj_serv = ServicioEquipo("Computador Pro", 50)
         else:
@@ -173,8 +178,9 @@ def confirmar_reserva():
 
   #Excepcion
     except Exception as e:
-        escribir_log(f"ERROR EN OPERACIÓN: {str(e)}", "ERROR")
+        escribir_log(f"ERROR EN OPERACIÓN: {type(e).__name__} - {str(e)}", "ERROR")
         messagebox.showerror("Error de Procesamiento", str(e))
+
  #Ejecutar simulacion
 def ejecutar_simulacion():
     """Simula 10 operaciones para demostrar robustez y manejo de excepciones."""
@@ -192,24 +198,33 @@ def ejecutar_simulacion():
     ]
 
     escribir_log("--- INICIANDO SIMULACIÓN DE 10 OPERACIONES ---")
+    exitos = 0
+    fallos = 0
+    
     for i, (n, c, ide, s_t, h, f, desc) in enumerate(casos, 1):
         try:
             # Replicamos la lógica para validar excepciones de forma controlada
             cli = Cliente(n, c, ide)
             cli.validar_datos()
             
-            if s_t == "Sala": serv = ServicioSala("Sala Sim", 100)
+            if s_t == "Sala": serv = ServicioSala("Sala Sim", 100, capacidad=5)
             elif s_t == "Equipo": serv = ServicioEquipo("PC Sim", 50)
             elif s_t == "Asesoria": serv = ServicioAsesoria("Asesoria Sim", 80)
             else: raise DatoNoValidoError("Servicio no reconocido")
 
             res = Reserva(cli, serv, int(h), f)
+            # Insertar registro exitoso
             tabla.insert("", tk.END, values=res.obtener_datos_tabla)
             escribir_log(f"Simulación #{i}: ÉXITO - {desc}")
+            exitos += 1
         except Exception as e:
+            # Insertar registro fallido con Tag de color rojo para demostrar manejo de error
+            error_msg = f"FALLIDO: {str(e)}"
+            tabla.insert("", tk.END, values=(n if n else "N/A", s_t, h, f, error_msg, "$0.00"), tags=('error_row',))
             escribir_log(f"Simulación #{i}: FALLO CONTROLADO - {desc} | Motivo: {str(e)}", "WARNING")
+            fallos += 1
 
-    messagebox.showinfo("Simulación", "Se ejecutaron 10 pruebas. Revise logs.txt y la tabla.")
+    messagebox.showinfo("Simulación Completa", f"Se ejecutaron 10 pruebas:\n- Exitosas: {exitos}\n- Fallidas: {fallos}\n\nLos detalles están en la tabla y en logs.txt.")
  
  #Limpiar
 def limpiar_campos():
@@ -217,8 +232,12 @@ def limpiar_campos():
         e.delete(0, tk.END)
     combo_servicio.set("")
 
+# Función auxiliar para validar que solo entren números
+def solo_numeros(char):
+    return char.isdigit() or char == ""
+
 # =========================================================
-# 4. VISTA (INTERFAZ GRÁFICA CON TKINTER)
+# 4. VISTA (INTERFAZ GRÁFICA TKINTER)
 # =========================================================
 
 def iniciar_interfaz():
@@ -228,6 +247,9 @@ def iniciar_interfaz():
     ventana.title("Sistema de Reservas FJ - Fase 4 UNAD")
     ventana.geometry("1150x850")
     ventana.configure(bg="#F4F6F7")
+
+    # Registro de validación numérica
+    vcmd = (ventana.register(solo_numeros), '%S')
 
     # Título Principal 
     tk.Label(ventana, text="SISTEMA DE GESTIÓN DE RESERVAS", font=("Segoe UI", 24, "bold"), 
@@ -239,6 +261,7 @@ def iniciar_interfaz():
 
     lbl_s = {"font": ("Segoe UI Semibold", 10), "bg": "white", "fg": "#5D6D7E"}
     ent_s = {"font": ("Segoe UI", 11), "highlightthickness": 1, "highlightbackground": "#D5DBDB", "relief": "flat"}
+    
     # Fila 1
     #Nombre del cliente
     tk.Label(frame_card, text="Nombre del Cliente", **lbl_s).grid(row=0, column=0, sticky="w")
@@ -250,7 +273,9 @@ def iniciar_interfaz():
  
     #ID
     tk.Label(frame_card, text="Identificación (ID)", **lbl_s).grid(row=0, column=2, sticky="w")
-    entry_identificacion = tk.Entry(frame_card, **ent_s); entry_identificacion.grid(row=1, column=2, sticky="ew", padx=10, pady=5, ipady=4)
+    # Se agrega validación de solo números
+    entry_identificacion = tk.Entry(frame_card, **ent_s, validate='key', validatecommand=vcmd)
+    entry_identificacion.grid(row=1, column=2, sticky="ew", padx=10, pady=5, ipady=4)
 
     # Fila 2
     #Tipo de servicio
@@ -260,7 +285,9 @@ def iniciar_interfaz():
  
     # Tiempo de duracion (horas)
     tk.Label(frame_card, text="Duración (Horas)", **lbl_s).grid(row=2, column=1, sticky="w", pady=(15,0))
-    entry_horas = tk.Entry(frame_card, **ent_s); entry_horas.grid(row=3, column=1, sticky="ew", padx=10, pady=5, ipady=4)
+    # Se agrega validación de solo números
+    entry_horas = tk.Entry(frame_card, **ent_s, validate='key', validatecommand=vcmd)
+    entry_horas.grid(row=3, column=1, sticky="ew", padx=10, pady=5, ipady=4)
  
     #Fecha 
     tk.Label(frame_card, text="Fecha (DD/MM/AAAA)", **lbl_s).grid(row=2, column=2, sticky="w", pady=(15,0))
@@ -286,6 +313,10 @@ def iniciar_interfaz():
     #Columnas
     columnas = ("Cliente", "Servicio", "Horas", "Fecha", "Estado", "Costo Final")
     tabla = ttk.Treeview(frame_tabla, columns=columnas, show="headings")
+    
+    # Configuración de tags para colores
+    tabla.tag_configure('error_row', foreground='#C0392B') # Rojo para errores
+
     for col in columnas:
         tabla.heading(col, text=col.upper())
         tabla.column(col, width=150, anchor="center")
@@ -299,4 +330,5 @@ def iniciar_interfaz():
 
 if __name__ == "__main__":
     iniciar_interfaz()
+
 
