@@ -6,7 +6,7 @@ Gestiona los servicios del sistema.
 - Registro de logs
 """
 
-from servicio import (
+from modelos.servicio import (
     ServicioSala,
     ServicioEquipo,
     ServicioAsesoria,
