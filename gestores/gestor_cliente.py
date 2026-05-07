@@ -1,5 +1,5 @@
 
-from cliente import Cliente, ClienteError
+from modulos.cliente import Cliente, ClienteError
 
 class GestorCliente:
     def __init__(self):
