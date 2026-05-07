@@ -69,7 +69,7 @@ class Reserva:
         """
         try:
             # Se calcula el costo usando el método del servicio
-            costo = self.__servicio.calcular_costo(horas=self.__duracion)
+            costo = self.__servicio.calcular_costo(self.__duracion)
 
             # Registro en logs
             self._log(f"Costo calculado: {costo}")

@@ -5,10 +5,6 @@ Se aplican conceptos de:
 - Encapsulación: Uso de atributos privados (__nombre) para proteger los datos.
 - Métodos de Acceso: Implementación de decoradores @property para lectura segura.
 """
-
-import tkinter as tk #Importamos la biblioteca tkinter para crear la interface.
-from tkinter import messagebox # Importamos el módulo messagebox de tkinter para mostrar mensajes emergentes.
-
 """
 Modulo: cliente.py 
 Define la entidad Cliente con validaciones internas.
