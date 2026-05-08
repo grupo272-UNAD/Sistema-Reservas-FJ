@@ -1,1 +1,18 @@
 
+[2026-05-07 22:23:55] [INFO] Aplicación iniciada por el usuario.
+[2026-05-07 22:25:54] [INFO] Aplicación iniciada por el usuario.
+[2026-05-07 22:26:51] [INFO] RESERVA MANUAL EXITOSA: Cliente Paula Andrea Gonzalez Herndez | Servicio Sala
+[2026-05-07 22:27:23] [ERROR] ERROR EN OPERACIÓN: DatoNoValidoError - Por favor, complete todos los campos.
+[2026-05-07 22:27:27] [INFO] --- INICIANDO SIMULACIÓN DE 10 OPERACIONES ---
+[2026-05-07 22:27:27] [INFO] Simulación #1: ÉXITO - VÁLIDO
+[2026-05-07 22:27:27] [WARNING] Simulación #2: FALLO CONTROLADO - ERROR: Nombre vacío | Motivo: El nombre no puede estar vacío.
+[2026-05-07 22:27:27] [WARNING] Simulación #3: FALLO CONTROLADO - ERROR: ID no numérica | Motivo: La identificación debe ser numérica.
+[2026-05-07 22:27:27] [WARNING] Simulación #4: FALLO CONTROLADO - ERROR: Fecha mal formato | Motivo: Fecha inválida.
+[2026-05-07 22:27:27] [INFO] Simulación #5: ÉXITO - VÁLIDO
+[2026-05-07 22:27:27] [WARNING] Simulación #6: FALLO CONTROLADO - ERROR: Correo sin punto | Motivo: Correo electrónico con formato inválido.
+[2026-05-07 22:27:27] [WARNING] Simulación #7: FALLO CONTROLADO - ERROR: Servicio inválido | Motivo: Servicio no reconocido
+[2026-05-07 22:27:27] [INFO] Simulación #8: ÉXITO - VÁLIDO
+[2026-05-07 22:27:27] [INFO] Simulación #9: ÉXITO - VÁLIDO
+[2026-05-07 22:27:27] [WARNING] Simulación #10: FALLO CONTROLADO - ERROR: Horas no numéricas | Motivo: Las horas deben ser numéricas.
+[2026-05-07 22:41:31] [ERROR] ERROR EN OPERACIÓN: DatoNoValidoError - Por favor, complete todos los campos.
+[2026-05-07 22:41:48] [INFO] RESERVA MANUAL EXITOSA: Cliente santi | Servicio Equipo
