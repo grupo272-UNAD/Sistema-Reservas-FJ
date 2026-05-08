@@ -32,7 +32,7 @@ class Servicio(ABC):
         self._costo_base = costo_base
 
     @abstractmethod
-    def calcular_costo(self, **kwargs) -> float:
+    def calcular_costo(self, tiempo: int) -> float:
         """
         Método abstracto que cada servicio debe implementar.
         Permite polimorfismo.
@@ -75,11 +75,11 @@ class ServicioSala(Servicio):
 
         self._capacidad = capacidad
 
-    def calcular_costo(self, horas: int = 1) -> float:
-        if horas <= 0:
+    def calcular_costo(self, tiempo: int = 1) -> float:
+        if tiempo <= 0:
             raise ServicioError("Las horas deben ser mayores a 0")
 
-        return self._costo_base * horas
+        return self._costo_base * tiempo
 
     def descripcion(self) -> str:
         return f"Sala con capacidad para {self._capacidad} personas"
@@ -96,11 +96,11 @@ class ServicioEquipo(Servicio):
 
         self._tipo_equipo = tipo_equipo
 
-    def calcular_costo(self, dias: int = 1) -> float:
-        if dias <= 0:
+    def calcular_costo(self, tiempo: int = 1) -> float:
+        if tiempo <= 0:
             raise ServicioError("Los días deben ser mayores a 0")
 
-        return self._costo_base * dias
+        return self._costo_base * tiempo
 
     def descripcion(self) -> str:
         return f"Alquiler de equipo tipo: {self._tipo_equipo}"
@@ -117,14 +117,14 @@ class ServicioAsesoria(Servicio):
 
         self._especialidad = especialidad
 
-    def calcular_costo(self, horas: int = 1, descuento: float = 0) -> float:
-        if horas <= 0:
+    def calcular_costo(self, tiempo: int = 1, descuento: float = 0) -> float:
+        if tiempo <= 0:
             raise ServicioError("Las horas deben ser mayores a 0")
 
         if descuento < 0 or descuento > 1:
             raise ServicioError("El descuento debe estar entre 0 y 1")
 
-        total = self._costo_base * horas
+        total = self._costo_base * tiempo
         return total * (1 - descuento)
 
     def descripcion(self) -> str:
