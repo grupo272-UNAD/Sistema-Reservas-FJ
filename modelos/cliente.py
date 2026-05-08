@@ -37,3 +37,4 @@ class Cliente:
     @property
     def idCliente(self):
         return self.__id_cliente
+
