@@ -6,9 +6,9 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 import datetime
 import re
-from modelos.cliente import Cliente
+
 from modelos.servicio import ServicioSala, ServicioEquipo, ServicioAsesoria
-from modelos.reserva import Reserva
+
 
 
 class DatoNoValidoError(Exception):
@@ -17,7 +17,7 @@ class DatoNoValidoError(Exception):
 
 # PERSISTENCIA Y REGISTRO DE EVENTOS (LOGS)
 
-def escribir_log(mensaje, nivel="INFO"):
+def escribir_log(mensaje:str, nivel: str = 'INFO'):
     """Registra eventos y errores en 'logs.txt'."""
     ahora = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     try:
@@ -48,18 +48,18 @@ def confirmar_reserva():
             raise DatoNoValidoError("Fecha inválida. Use el formato DD/MM/AAAA.")
 
         # Creación del Cliente 
-        obj_cli = Cliente(nom, correo, ident)
+       
 
         # Creación del Servicio 
         if serv_tipo == "Sala":
             obj_serv = ServicioSala("Sala A", 100, capacidad=10) # Ajusta argumentos según tu modelo
         elif serv_tipo == "Equipo":
-            obj_serv = ServicioEquipo("Computador Pro", 50)
+            obj_serv = ServicioEquipo("Computador Pro", 50, 'PC')
         else:
-            obj_serv = ServicioAsesoria("Mentoría Técnica", 80)
+            obj_serv = ServicioAsesoria("Mentoría Técnica", 80, 'Sistema')
 
         # Creación de la Reserva 
-        nueva_reserva = Reserva(obj_cli, obj_serv, int(horas_s), fecha)
+    
         
         # Procesar costo 
         costo_final = obj_serv.calcular_costo(int(horas_s))
@@ -102,15 +102,13 @@ def ejecutar_simulacion():
             if not ide.isdigit(): raise DatoNoValidoError("La identificación debe ser numérica.")
             if not h.isdigit(): raise DatoNoValidoError("Las horas deben ser numéricas.")
             if not re.match(r"^\d{2}/\d{2}/\d{4}$", f): raise DatoNoValidoError("Fecha inválida.")
-
-            cli = Cliente(n, c, ide)
             
             if s_t == "Sala": serv = ServicioSala("Sala Sim", 100, 5) # Ajusta parámetros
             elif s_t == "Equipo": serv = ServicioEquipo("PC Sim", 50, 'Computador de mesa')
             elif s_t == "Asesoria": serv = ServicioAsesoria("Asesoria Sim", 80, 'Sistemas')
             else: raise DatoNoValidoError("Servicio no reconocido")
 
-            res = Reserva(cli, serv, int(h))
+        
             costo = serv.calcular_costo(int(h))
             
             # Insertar registro exitoso
@@ -134,8 +132,8 @@ def limpiar_campos():
     combo_servicio.set("")
 
 # Función auxiliar para validar que solo entren números
-def solo_numeros(char):
-    return char.isdigit() or char == ""
+def solo_numeros(char: int):
+    return char 
 
 # =========================================================
 # 4. VISTA (INTERFAZ GRÁFICA TKINTER) - INTACTA
